@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Square } from '../square';
-
+import { Rect } from '../Shapes/rect';
+import { Shape } from '../Shapes/shape';
+import { Square } from '../Shapes/square';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -9,14 +10,15 @@ import { Square } from '../square';
 export class CanvasComponent implements OnInit {
   @ViewChild('canvas', { static: true })
   canvas!: ElementRef<HTMLCanvasElement>;
-  squares!: Square[];
+  movingShape: Shape[] = [];
+  //change Square to all options
+  existingShapes: Shape[] = [];
 
   private ctx!: CanvasRenderingContext2D;
 
   constructor() {}
 
   ngOnInit(): void {
-    this.squares = [];
     let temp = this.canvas.nativeElement.getContext('2d');
     if (temp) {
       this.ctx = temp;
@@ -25,18 +27,13 @@ export class CanvasComponent implements OnInit {
 
   animate() {
     const newSquare = new Square(this.ctx);
-    this.squares.push(newSquare);
+    const newRect = new Rect(this.ctx);
+    this.movingShape.push(newSquare, newRect);
     setInterval(() => {
       this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-      this.squares.forEach((square: Square) => {
-        square.moveDown();
+      this.movingShape.forEach((shape: Shape) => {
+        shape.moveDown();
       });
     }, 300);
   }
-
-  // animate() {
-  //   // this.ctx.fillStyle = 'red';
-  //   const square = new Square(this.ctx);
-  //   square.move(1, 40);
-  // }
 }
